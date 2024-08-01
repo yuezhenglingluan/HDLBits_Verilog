@@ -12,7 +12,7 @@ module top_module(
 
     always @(*) begin
         case(state)
-            S0: in ? S0 : S1; 
+            S0: next_state = in ? S0 : S1; 
             S1: next_state = S2;
             S2: next_state = S3;
             S3: next_state = S4;
@@ -21,9 +21,9 @@ module top_module(
             S6: next_state = S7;
             S7: next_state = S8;
             S8: next_state = DONE;
-            DONE: in ? FINISHED : WAIT;
-            WAIT: in ? S0 : WAIT;
-            FINISHED: in ? S0 : S1;
+            DONE: next_state = in ? FINISHED : WAIT;
+            WAIT: next_state = in ? S0 : WAIT;
+            FINISHED: next_state = in ? S0 : S1;
         endcase
     end
 
