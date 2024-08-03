@@ -4,7 +4,7 @@ module top_module (
     input x,
     output z
 );
-    reg [3:0] state, next_state;
+    reg [2:0] state, next_state;
     parameter A = 0, B = 1, C = 2, D = 3, E = 4;
 
     always @(*) begin
