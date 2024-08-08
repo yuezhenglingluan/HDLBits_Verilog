@@ -7,6 +7,4 @@ module top_module (
 
     // assign q = 0; // Fix me
     assign q = (a & c) | (a & d) | (b & c) | (b & d);
-
-
 endmodule

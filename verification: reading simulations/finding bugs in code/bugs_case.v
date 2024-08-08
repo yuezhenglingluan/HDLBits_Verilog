@@ -31,5 +31,4 @@ module top_module (
         //     6'h46: out = 9;
         //     default: valid = 0;
         // endcase
-
 endmodule

@@ -15,5 +15,4 @@ module top_module (
     mux2 mux00 ( sel[0],    a,    b, mux0 );
     mux2 mux01 ( sel[0],    c,    d, mux1 );
     mux2 mux02 ( sel[1], mux0, mux1,  out );
-
 endmodule

@@ -26,6 +26,4 @@ module top_module (
     //     if (~out)
     //         result_is_zero = 1;
     // end
-
-
 endmodule
