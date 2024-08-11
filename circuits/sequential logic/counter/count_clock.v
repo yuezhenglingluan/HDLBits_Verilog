@@ -7,97 +7,54 @@ module top_module(
     output [7:0] mm,
     output [7:0] ss); 
 
+    wire enable_h, enable_m;
+
+    assign enable_h = ((mm == {4'h5, 4'h9}) && enable_m);
+    assign enable_m = (ss == {4'h5, 4'h9});
+
+    counter59 c1(clk, reset, ena, ss);
+    counter59 c2(clk, reset, enable_m, mm);
+    counter12 c3(clk, reset, enable_h, hh);
+
     always @(posedge clk) begin
-        if (reset) begin 
-            ena <= 3'b0;
-        end else begin
-            if (q[3:0] == 4'd8) begin
-                ena[1] <= 1'b1;
-            end else begin 
-                ena[1] <= 0;
-            end if (q[3:0] == 4'd8 && q[7:4] == 4'd9) begin
-                ena[2] <= 1'b1;
-            end else begin 
-                ena[2] <= 0;
-            end if (q[3:0] == 4'd8 && q[7:4] == 4'd9 && q[11:8] == 4'd9) begin
-                ena[3] <= 1'b1;
-            end else begin 
-                ena[3] <= 0;
-            end
-        end
+        if (reset) pm <=0;
+        else pm <= ((hh == 8'h11) && (mm == 8'h59) && (ss == 8'h59)) ? ~pm : pm;
     end
 endmodule
 
 
-module top_module (
-    input             clk,
-    input             reset,  // Synchronous active-high reset
-    output reg [ 3:1] ena,
-    output reg [15:0] q
+module counter59 (
+    input clk,
+    input reset,  // Synchronous active-high reset
+    input enable,
+    output reg [7:0] q
 );
+
   always @(posedge clk) begin
-    if (reset) begin 
-        ena <= 3'b0;
-    end else begin
-        if (q[3:0] == 4'd8) begin
-            ena[1] <= 1'b1;
-        end else begin 
-            ena[1] <= 0;
-        end if (q[3:0] == 4'd8 && q[7:4] == 4'd9) begin
-            ena[2] <= 1'b1;
-        end else begin 
-            ena[2] <= 0;
-        end if (q[3:0] == 4'd8 && q[7:4] == 4'd9 && q[11:8] == 4'd9) begin
-            ena[3] <= 1'b1;
-        end else begin 
-            ena[3] <= 0;
-        end
+    if (reset) q <= 0;
+    else if (enable) begin
+        if (q[3:0] == 4'h9) begin
+            q[3:0] <= 0;
+            if (q[7:4] == 4'h5) q[7:4] <= 0;
+            else q[7:4] <= q[7:4] + 1'b1;
+        end else q[3:0] <= q[3:0] + 1'b1;
     end
   end
-  count10 c1 (
-      .clk   (clk),
-      .reset (reset),
-      .enable(1),
-      .q     (q[3:0])
-  );
-  count10 c2 (
-      .clk   (clk),
-      .reset (reset),
-      .enable(ena[1]),
-      .q     (q[7:4])
-  );
-  count10 c3 (
-      .clk   (clk),
-      .reset (reset),
-      .enable(ena[2]),
-      .q     (q[11:8])
-  );
-  count10 c4 (
-      .clk   (clk),
-      .reset (reset),
-      .enable(ena[3]),
-      .q     (q[15:12])
-  );
 endmodule
 
-module count10 (
+module counter12 (
     input clk,
     input reset,
     input enable,
-    output reg [3:0] q
+    output reg [7:0] q
 );
 
     always @(posedge clk) begin
-        if (reset) begin
-            q <= 4'b0;
-        end else if (enable) begin
-            if (q == 4'd9) begin
-                q = 4'b0;
-            end else begin
-                q = q + 1'b1;
-            end
-        end else begin
-            q = q;
+        if (reset) q = {4'h1, 4'h2};
+        else if (enable) begin
+            if ((q == {4'h1, 4'h2})) q <= {4'h0, 4'h1};
+            else if (q[3:0] == 4'h9) q <= {4'h1, 4'h0};
+            else q[3:0] <= q[3:0] + 1'b1;
         end
     end
 endmodule
